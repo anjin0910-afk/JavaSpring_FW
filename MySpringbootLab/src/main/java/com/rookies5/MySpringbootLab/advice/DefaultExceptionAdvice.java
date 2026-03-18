@@ -12,6 +12,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +41,21 @@ public class DefaultExceptionAdvice {
     protected ResponseEntity<Object> handleException(HttpMessageNotReadableException e) {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("message", e.getMessage());
+        result.put("httpStatus", HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
+        e.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        result.put("message", "Validation failed");
+        result.put("errors", errors);
         result.put("httpStatus", HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }

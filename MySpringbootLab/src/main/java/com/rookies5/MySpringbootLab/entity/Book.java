@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = "bookDetail")
 public class Book {
 
     @Id
@@ -31,4 +31,14 @@ public class Book {
     private LocalDate publishDate;
 
     private Integer price;
+
+    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private BookDetail bookDetail;
+
+    public void setBookDetail(BookDetail bookDetail) {
+        this.bookDetail = bookDetail;
+        if (bookDetail != null && bookDetail.getBook() != this) {
+            bookDetail.setBook(this);
+        }
+    }
 }

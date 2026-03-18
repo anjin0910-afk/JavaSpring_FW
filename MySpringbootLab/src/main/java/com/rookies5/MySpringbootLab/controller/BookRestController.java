@@ -18,31 +18,39 @@ public class BookRestController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<BookDTO.BookResponse> createBook(@Valid @RequestBody BookDTO.BookCreateRequest request) {
-        BookDTO.BookResponse response = bookService.createBook(request);
+    public ResponseEntity<BookDTO.Response> createBook(@Valid @RequestBody BookDTO.Request request) {
+        BookDTO.Response response = bookService.createBook(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<BookDTO.BookResponse>> getAllBooks() {
+    public ResponseEntity<List<BookDTO.Response>> getAllBooks() {
         return ResponseEntity.ok(bookService.getAllBooks());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookDTO.BookResponse> getBookById(@PathVariable Long id) {
-        BookDTO.BookResponse response = bookService.getBookById(id);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<BookDTO.Response> getBookById(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.getBookById(id));
     }
 
     @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<BookDTO.BookResponse> getBookByIsbn(@PathVariable String isbn) {
-        BookDTO.BookResponse response = bookService.getBookByIsbn(isbn);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<BookDTO.Response> getBookByIsbn(@PathVariable String isbn) {
+        return ResponseEntity.ok(bookService.getBookByIsbn(isbn));
+    }
+
+    @GetMapping("/search/author")
+    public ResponseEntity<List<BookDTO.Response>> searchBooksByAuthor(@RequestParam String author) {
+        return ResponseEntity.ok(bookService.searchBooksByAuthor(author));
+    }
+
+    @GetMapping("/search/title")
+    public ResponseEntity<List<BookDTO.Response>> searchBooksByTitle(@RequestParam String title) {
+        return ResponseEntity.ok(bookService.searchBooksByTitle(title));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookDTO.BookResponse> updateBook(@PathVariable Long id, @Valid @RequestBody BookDTO.BookUpdateRequest request) {
-        BookDTO.BookResponse response = bookService.updateBook(id, request);
+    public ResponseEntity<BookDTO.Response> updateBook(@PathVariable Long id, @Valid @RequestBody BookDTO.Request request) {
+        BookDTO.Response response = bookService.updateBook(id, request);
         return ResponseEntity.ok(response);
     }
 
